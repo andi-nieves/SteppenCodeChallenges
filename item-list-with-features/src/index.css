@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+ul {
+  margin-bottom: 50px;
+}
+ul.editing li {
+  color: #ccc;
+  cursor: not-allowed;
+}
+ul li p {
+  flex: 1
+}
+ul li .actions {
+  display: none;
+}
+ul li {
+  cursor: pointer;
+  padding: 5px;
+  max-width: 500px;
+}
+
+ul li:not(:last-child) {
+  border-bottom: 1px solid #ccc;
+}
+
+ul:not(.editing) li:hover .actions {
+  display: block;
+}
+
+
