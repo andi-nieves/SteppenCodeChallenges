@@ -1,33 +1,78 @@
+import React from "react"
 import { ItemList } from "./ItemList.jsx"
 
 import "bulma/css/bulma.min.css"
 
+import Modal from './Modal'
+
 function App() {
+  const [list, setList] = React.useState([]);
+  const [text, setText] = React.useState("")
+  const [selected, setSelected] = React.useState(null)
+  const [deleteSelected, setDeleteSelected] = React.useState(null)
+
+  const submit = () => {
+    if (selected) {
+      list[selected.index] = text
+      setList(list)
+      setSelected(null)
+    } else {
+      list.push(text)
+    }
+    setText("")
+  }
+
+  const onKeyUp = e => {
+    if (e.keyCode !== 13) return
+    submit()
+  }
+
+  const onChange = e => setText(e.target.value)
+
+  const onEdit = selected => {
+    setText(selected.value)
+    setSelected(selected)
+  }
+
+  const onDelete = selected => setDeleteSelected(selected)
+
+  const deleteItem = () => {
+    const newArr = list.filter((v, i) => deleteSelected.index !== i)
+    setList(newArr)
+    onDismiss()
+  }
+
+  const onDismiss = () => setDeleteSelected(null)
+
   return (
-    <section className="section">
-      <div className="box">
-        <h1 className="title">Item List with Add, Edit and Remove</h1>
-        <p>Open <code>ItemList.jsx</code> and implement your component named <code>ItemList</code>.</p>
+    <div className="container">
+      <h1 className="is-size-2">
+        Item List with Add, Edit and Remove
+      </h1>
+      {list.length === 0 && <p>To start please type text below.</p>}
+      <ItemList
+        onEdit={onEdit}
+        onDelete={onDelete}
+        data={list}
+        editing={selected}
+      />
+      <div className="field has-addons" style={{ maxWidth: 500 }}>
+        <div className="control is-expanded">
+          <input value={text} onChange={onChange} onKeyUp={onKeyUp} type="text" className="input is-info" placeholder="Compose a text" />
+        </div>
+        <p className="control">
+          <button onClick={submit} className="button is-info">Save</button>
+        </p>
       </div>
 
-      <h3 className="title is-4">Task</h3>
-      <div className="content">
-        <p>Create a list of text items, with add, edit and remove functionality:</p>
-        <ul>
-          <li>Start the list empty.</li>
-          <li>The last item in the list is a text field where you can enter free text.</li>
-          <li>When the text field is submitted (either with a button or by pressing enter), the text in the field is added to the list as a new item.</li>
-          <li>Display each of the items as a separate paragraph when added.</li>
-          <li>When you hover over a list item, two buttons appear to the left of it - a delete button and an edit button.</li>
-          <li>Pressing the delete button asks for confirmation and then removes the item from the list.</li>
-          <li>Pressing the edit button turns the list item back into a text field, and when that field is submitted (either with a button or by pressing enter) it updates the list item.</li>
-        </ul>
-        <p>Use <code>bulma</code> classes for styling - the library is included in the bundle already.</p>
-      </div>
-
-      <h3 className="title is-4">Test</h3>
-      <ItemList />
-    </section>
+      <Modal
+        show={deleteSelected}
+        title={deleteSelected?.value}
+        message="Are you sure you want to delete this item?"
+        onConfirm={deleteItem}
+        onDismiss={onDismiss}
+      />
+    </div>
   )
 }
 
